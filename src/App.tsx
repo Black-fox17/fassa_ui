@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { GraduationCap } from 'lucide-react';
 import { PersonalInfoStep } from './components/PersonalInfoStep';
 import { PaymentDetailsStep } from './components/PaymentDetailsStep';
 import { ReceiptUploadStep } from './components/ReceiptUploadStep';

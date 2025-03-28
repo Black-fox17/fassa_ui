@@ -5,7 +5,6 @@ import type { StepProps } from '../types';
 import { useState } from 'react';
 import { simulateOCR } from '../utils';
 import { FASSA_ACCOUNT_NUMBER } from '../constants';
-
 export function ReceiptUploadStep({
   onNext,
   onPrevious,
@@ -24,6 +23,12 @@ export function ReceiptUploadStep({
       receipt: formData.receipt,
     },
   });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'img' | 'pdf') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploaded(true);
+    }
+  };
 
   const onSubmit = async (data: any) => {
     try {
@@ -35,7 +40,6 @@ export function ReceiptUploadStep({
         setError('Please upload a receipt');
         return;
       }
-      setUploaded(true);
       // Simulate OCR processing
       const ocrResult = await simulateOCR(file);
 
@@ -64,28 +68,32 @@ export function ReceiptUploadStep({
       <div className="space-y-4">
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
           <div className="flex flex-col items-center">
+          <label
+              htmlFor="receipt"
+              className="cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
+            >
+              <span>Upload your receipt</span>
+              <input
+                id="receipt"
+                type="file"
+                className="sr-only"
+                accept="image/*,.pdf"
+                {...register('receipt', {
+                    required: 'Receipt is required',
+                    onChange: (e) => handleFileChange(e, 'img'), // Attach custom handler here
+                })}
+            />
 
+            </label>
+            <p className="text-sm text-gray-500">
+              PNG, JPG or PDF up to 10MB
+            </p>
             {uploaded ? (
               <div className="flex items-center justify-center bg-green-50 border border-green-200 rounded-md h-12 w-12">
                 <Check className="h-6 w-6 text-green-600" />
               </div>
             ) : (
               <><Upload className="h-12 w-12 text-gray-400" /><div className="mt-4 text-center">
-                  <label
-                    htmlFor="receipt"
-                    className="cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    <span>Upload your receipt</span>
-                    <input
-                      id="receipt"
-                      type="file"
-                      className="sr-only"
-                      accept="image/*,.pdf"
-                      {...register('receipt', { required: 'Receipt is required' })} />
-                  </label>
-                  <p className="text-sm text-gray-500">
-                    PNG, JPG or PDF up to 10MB
-                  </p>
                 </div></>
             )}
             
